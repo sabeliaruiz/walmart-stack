@@ -1,0 +1,65 @@
+version: '3.3'
+
+services:
+  mongodb:
+    image: "mongo:latest"
+    ports:
+      - 27017:27017
+    volumes:
+      - ${ROOT_DIR_SF}/walmart/data:/data/db
+  api:
+    image: "walmart-api:latest"
+    ports:
+      - 3030:3030
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: 10
+    command: npm run start:development
+    volumes:
+      - ${ROOT_DIR_SF}/walmart/walmart-api/app/:/app/app
+      - ${ROOT_DIR_SF}/walmart/walmart-api/config/:/app/config
+      - ${ROOT_DIR_SF}/walmart/walmart-api/app.js:/app/app.js
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 64M
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 30s
+  ui:
+    image: 'walmart-ui:latest'
+    ports:
+      - 3031:4200
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: 10
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - ${ROOT_DIR_SF}/walmart/walmart-ui/src/:/app/src/
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+      restart_policy:
+        condition: any
+        delay: 5s
+        window: 30s
