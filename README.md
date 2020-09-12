@@ -16,6 +16,7 @@
     b. Copiar el archivo products dentro del contenedor, docker cp ./products.json  NOMBRE_CONTAINER:/products.json (este comando se debe ejecutar en la raiz del proyecto walmart-stack).
     c. Entrar al container de mongo, docker exec -it NOMBRE_CONTAINER /bin/sh
     d. Dentro del container ejecutar el comando de import: mongoimport --uri=mongodb://172.17.0.1:27017 --collection=products --db=walmart --file=./products.json
+8. Las pruebas unitarias se corren ejecutando npm run unit-test
 
 La url de ui es => http://172.17.0.1:3031/
 El servicio get expuesto por el micro servicio se puede probar desde postman con el siguiente curl:
